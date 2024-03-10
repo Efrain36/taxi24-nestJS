@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { Trip, TripStatus } from 'src/core/entities';
+import { DriverStatus, Trip, TripStatus } from 'src/core/entities';
 import { CreateBillDto, CreateTripRequestDto } from 'src/core/dtos';
 import { TripFactoryService } from './trip-factory.service';
 import { IDataServices } from 'src/core';
 import * as geolib from 'geolib';
 import { BillUseCases } from '../bill/bill.use-case';
+import { DriverUseCases } from '../driver';
 
 
 @Injectable()
@@ -13,6 +14,7 @@ export class TripUseCases {
     private dataServices: IDataServices,
     private tripFactoryService: TripFactoryService,
     private billUseCases: BillUseCases,
+    private driverIseCases: DriverUseCases
   ) { }
 
   getActiveTrips(): Promise<Trip[]> {
@@ -25,15 +27,18 @@ export class TripUseCases {
 
   async createTripRequest(tripDto: CreateTripRequestDto): Promise<Trip> {
     await this.validateTripRequest(tripDto.driverId, tripDto.passangerId);
-    return this.createTrip(tripDto);
+    const newTrip = await this.createTrip(tripDto);
+    await this.driverIseCases.changeDriverStatus(tripDto.driverId, DriverStatus.BUSY)
+    return newTrip;
   }
 
-  async completeTrip(tripId: number): Promise<Trip> {
+  async completeTrip(tripId: number): Promise<string> {
     const trip = await this.validateTripCompletion(tripId);
 
     await this.dataServices.trips.completeTrip(tripId);
     await this.createTripBill(trip);
-    return trip;
+    await this.driverIseCases.changeDriverStatus(trip.driver.id, DriverStatus.ACTIVE)
+    return 'Trip Completed succesfully';
   }
 
   private async createTripBill(trip: Trip){

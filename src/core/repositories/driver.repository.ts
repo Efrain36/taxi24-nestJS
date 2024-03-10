@@ -27,4 +27,7 @@ export class DriverRepository extends PostgresGenericRepository<Driver> {
     .getMany();
   }
 
+  async changeDriverStatus(driverId: number, driverStatus: DriverStatus) {
+    await this._repository.update(driverId, { status: driverStatus });
+  }
 }

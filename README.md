@@ -4,7 +4,7 @@ This is a NestJS application that requires Docker for setting up the database se
 
 ## Prerequisites
 
-- Node.js
+- Node.js v18.15.0
 - npm
 - Docker
 
@@ -14,6 +14,7 @@ This is a NestJS application that requires Docker for setting up the database se
 
 ## Start the app
   - npm i
+  - create your .env.local file usign .env.example
   - npm run start
   - run data.sql in the DB
   - go to localhost:3000/swagger

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IDataServices } from '../../core/abstracts';
-import { Driver } from 'src/core/entities';
+import { Driver, DriverStatus } from 'src/core/entities';
 
 @Injectable()
 export class DriverUseCases {
@@ -26,5 +26,9 @@ export class DriverUseCases {
 
   getNearbyDrivers(latitude: number, longitude:number, kilometersAround: number): Promise<Driver[]> {
     return this.dataServices.drivers.findNearbyDrivers(latitude, longitude, kilometersAround);
+  }
+
+  changeDriverStatus(driverId: number, driverStatus: DriverStatus){
+    return this.dataServices.drivers.changeDriverStatus(driverId, driverStatus);
   }
 }

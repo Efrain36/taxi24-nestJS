@@ -7,10 +7,13 @@ export class TripRepository extends PostgresGenericRepository<Trip> {
     super(repository);
   }
 
-  findActiveTrips(): Promise<Trip[]>{
-    return this._repository.find({where:{
-      status: TripStatus.ACTIVE
-    }})
+  async findActiveTrips(): Promise<Trip[]>{
+    return await this._repository.find({
+      where:{
+        status: TripStatus.ACTIVE
+      },
+      relations: ["driver", "passenger"]
+    });
   }
 
   async completeTrip(tripId: any) {
