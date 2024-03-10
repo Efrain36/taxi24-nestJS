@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+   taxi24-db:
+     image: postgres:alpine
+     restart: always
+     ports:
+       - 5434:5432
+     env_file:
+       - ./env/.env.local
+   taxi24-test-db:
+      image: postgres:alpine
+      env_file:
+       - ./env/.env.test
+      restart: always
+      ports:
+       - 5435:5432
